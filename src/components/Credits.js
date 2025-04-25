@@ -48,7 +48,7 @@ class Credits extends Component {
     return (
       <div>
         <h1>Credits</h1>
-        <h2>Account Balance: ${parseFloat(this.props.balance).toFixed(2)}</h2>
+        <h2>Account Balance: ${parseFloat(this.props.accountBalance).toFixed(2)}</h2>
         <br/>
         <h3>Add a Credit</h3>
         <form onSubmit={this.handlesubmit}>
