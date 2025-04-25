@@ -5,73 +5,81 @@ The Credits component contains information for Credits page view.
 Note: You need to work on this file for the Assignment.
 ==================================================*/
 import {Link} from 'react-router-dom';
-import React from 'react';
-import AccountBalance from './AccountBalance';
+import React, { Component } from 'react';
 
-const Credits = (props) => {
-  const formatCurrency = (amount) => {
-    return `$${parseFloat(amount).toFixed(2)}`;
+class Credits extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      description: '',
+      amount: '',
+    };
+  }
+  // Handle form submission
+  handleDescriptionChange = (event) => {
+    this.setState({ description: event.target.value });
   };
 
-  let creditsView = () => {
-    if (props.credits.length === 0) {
-      return <p>No credits available.</p>;
-    }
-    return props.credits.map((credit) => {
-      let date = credit.date ? credit.date.slice(0, 10) : 'N/A';
+  handleAmountChange = (event) => {
+    this.setState({ amount: event.target.value });
+  };
+
+  handlesubmit = (event) => {
+    event.preventDefault();
+    const newCredit = {
+      description: this.state.description,
+      amount: parseFloat(this.state.amount),
+    };
+    this.props.addCredit(newCredit);
+    this.setState({ description: '', amount: '' });
+  };
+
+  // Render the credits list
+  creditsView = () => {
+    return this.props.credits.map((credit, index) => (
+      <li key={index}>
+        {credit.description}: ${credit.amount.toFixed(2)}
+      </li>
+    ));
+  };
+  
+
+  render() {
     return (
-      <div key={credit.id}>
-        <p>{credit.description}</p>{}
-        <p>{formatCurrency(credit.amount)}</p>
-        <p>{date}</p>
+      <div>
+        <h1>Credits</h1>
+        <h2>Account Balance: ${parseFloat(this.props.balance).toFixed(2)}</h2>
+        <br/>
+        <h3>Add a Credit</h3>
+        <form onSubmit={this.handlesubmit}>
+          <input
+            type="text"
+            placeholder="Description"
+            value={this.state.description}
+            onChange={this.handleDescriptionChange}
+            required
+          />
+          <input
+            type="number"
+            placeholder="Amount"
+            value={this.state.amount}
+            onChange={this.handleAmountChange}
+            required
+          />
+          <button type="submit">Add Credit</button>
+        </form>
+        <ul>{this.creditsView()}</ul>
+        <div style={{ marginTop: '20px' }}>
+          <Link to="/">Back to Home</Link>
+          <br />
+          <Link to="/debits">Debits</Link>
+          <br />
+          <Link to="/userProfile">User Profile</Link>
+          <br />
+          <Link to="/login">Login</Link>
+          </div>
       </div>
     );
-    });
   }
-
-  const handlesubmit = (e) => {
-    e.preventDefault();
-    const credit = {
-      description: e.target.description.value,
-      amount: parseFloat(e.target.amount.value),
-    };
-    props.addCredit(credit);
-    e.target.reset();
-  }
-  
-  
-
-  return (
-    <div>
-      <h1>Credits</h1>
-      <AccountBalance accountBalance={props.accountBalance} />
-      <br/>
-
-      <div>
-        <h2>Credit History</h2>
-        <ul>
-          {creditsView()}
-        </ul>
-      </div>
-
-      <h2>Add a new credit</h2>
-      <form onSubmit={handlesubmit}>
-        <label>
-          Description:
-          <input type="text" name="description" required />
-        </label>
-        <br />
-        <label>
-          Amount:
-          <input type="number" name="amount" required />
-        </label>
-        <br />
-        <button type="submit">Add Credit</button>
-        </form>
-      <br />
-      <Link to="/">Return to Home</Link>
-    </div>
-  );
 }
-
 export default Credits;
