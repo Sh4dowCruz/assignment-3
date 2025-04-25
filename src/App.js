@@ -19,7 +19,7 @@ class App extends Component {
   constructor(props) {  // Create and initialize state
     super(props); 
     this.state = {
-      accountBalance: 0,
+      accountBalance: 779,
       creditList: [],
       debitList: [],
       currentUser: {
