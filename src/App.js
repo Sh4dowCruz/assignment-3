@@ -50,16 +50,6 @@ class App extends Component {
     }
   }
 
-  calculateTotal= (transactions) => {  // Calculate total balance
-    if (!Array.isArray(transactions)) {
-      return 0;
-    }
-    return transactions.reduce((total, transaction) => {  
-      const amount = parseFloat(transaction.amount);
-      return total + (isNaN(amount) ? 0 : amount);  
-    }, 0);
-  };
-
   //Add the credit entry
   addCredit = (credit) => {  
     this.setState((prevState) => {
