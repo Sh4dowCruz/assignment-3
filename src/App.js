@@ -7,19 +7,18 @@ It contains the top-level state.
 import React, {Component} from 'react';
 import {BrowserRouter as Router, Route} from 'react-router-dom';
 import axios from 'axios';
+import Home from "./components/Home"
+import UserProfile from "./components/UserProfile"
+import LogIn from "./components/Login"
+import Credits from "./components/Credits"
+import Debits from "./components/Debits"
 
-// Import other components
-import Home from './components/Home';
-import UserProfile from './components/UserProfile';
-import LogIn from './components/Login';
-import Credits from './components/Credits';
-import Debits from './components/Debits';
 
 class App extends Component {
-  constructor(props) {  // Create and initialize state
+  constructor(props) {  
     super(props); 
     this.state = {
-      accountBalance: 779,
+      accountBalance: 0,
       creditList: [],
       debitList: [],
       currentUser: {
@@ -29,64 +28,53 @@ class App extends Component {
     };
   }
 
-  async componentDidMount() {  // Fetch data from the server
+  async componentDidMount() {  
 
+    try {
     // Fetch credits
     const creditsResponse = await axios.get('https://johnnylaicode.github.io/api/credits.json');
-    this.setState({credits: creditsResponse.data});
+    const credits = creditsResponse.data;
 
     // Fetch debits
     const debitsResponse = await axios.get('https://johnnylaicode.github.io/api/debits.json');
-    this.setState({debits: debitsResponse.data});
-  }
+    const debits = debitsResponse.data;
 
-  calculateTotal= (transactions) => {  // Calculate total balance
-    if (!Array.isArray(transactions)) {
-      return 0;
-    }
-    return transactions.reduce((total, transaction) => {  
-      const amount = parseFloat(transaction.amount);
-      return total + (isNaN(amount) ? 0 : amount);  
-    }, 0);
-  };
-
-  updateAccountBalance = () => {  // Update account balance
-    const creditsTotal = this.calculateTotal(this.state.credits);
-    const debitsTotal = this.calculateTotal(this.state.debits);
+    const creditsTotal = credits.reduce((sum,item) => sum + item.amount, 0); 
+    const debitsTotal = debits.reduce((sum,item) => sum + item.amount, 0);
     const updatedBalance = creditsTotal - debitsTotal;
-    this.setState({accountBalance: parseFloat(updatedBalance.toFixed(2))});  // Rounding
+    this.setState({accountBalance: parseFloat(updatedBalance.toFixed(2)), credits, debits});  // Rounding
+    }
+
+    catch (error) {
+      console.error('Error fetching data from the API:', error);
+    }
   }
 
-  
   //Add the credit entry
   addCredit = (credit) => {  
-    const newCredit = {
-      id: crypto.randomUUID(),
-      description: credit.description.trim(),
-      amount: credit.amount,
-      date: new Date().toISOString().slice(0, 10),
-      type: 'credit',
-    };
-    this.setState((prevState) => ({
-      credits: [...prevState.credits, newCredit],
-    }), () => {
-      this.updateAccountBalance();
+    this.setState((prevState) => {
+      const newCredit = [...prevState.credits, credit];
+      const totalCredits = newCredit.reduce((sum, item) => sum + item.amount, 0);
+      const totalDebits = prevState.debits.reduce((sum, item) => sum + item.amount, 0);
+      const updatedBalance = totalCredits - totalDebits;
+      return {
+        credits: newCredit,
+        accountBalance: parseFloat(updatedBalance.toFixed(2)),  // Rounding
+      };
     });
   }
 
   //Add the debit entry
-  addDebit = (debit) => {  
-    const newDebit = {
-      id: crypto.randomUUID(),
-      description: debit.description.trim(),
-      amount: debit.amount,
-      date: new Date().toISOString().slice(0, 10),
-      type: 'debit',
-    };
-    this.setState((prevState) => ({
-      debits: [...prevState.debits, newDebit],
-    }), () => {
-      this.updateAccountBalance();
+  addDebit = (debit) => {
+    this.setState((prevState) => {
+      const newDebit = [...prevState.debits, debit];
+      const totalCredits = prevState.credits.reduce((sum, item) => sum + item.amount, 0);
+      const totalDebits = newDebit.reduce((sum, item) => sum + item.amount, 0);
+      const updatedBalance = totalCredits - totalDebits;
+      return {
+        debits: newDebit,
+        accountBalance: parseFloat(updatedBalance.toFixed(2)),
+      };
     });
   }
 
@@ -106,11 +94,11 @@ class App extends Component {
     )
     const LogInComponent = () => (<LogIn user={this.state.currentUser} mockLogIn={this.mockLogIn} />)
     const CreditsComponent = () => (<Credits 
-      credits={this.state.creditList}
+      credits={this.state.credits}
       accountBalance ={this.state.accountBalance.toFixed(2)}
       addCredit={this.addCredit}
     />)
-    const DebitsComponent = () => (<Debits debits={this.state.debitList}
+    const DebitsComponent = () => (<Debits debits={this.state.debits}
       accountBalance ={this.state.accountBalance.toFixed(2)}
       addDebit={this.addDebit}  
     />)
