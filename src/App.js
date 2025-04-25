@@ -57,6 +57,7 @@ class App extends Component {
     this.setState({accountBalance: parseFloat(updatedBalance.toFixed(2))});  // Rounding
   }
 
+  
   //Add the credit entry
   addCredit = (credit) => {  
     const newCredit = {
