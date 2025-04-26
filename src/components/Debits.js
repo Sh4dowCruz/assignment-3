@@ -7,7 +7,7 @@ Note: You need to work on this file for the Assignment.
 import {Link} from 'react-router-dom';
 import React, { Component } from 'react';
 
-class Credits extends Component {
+class Debits extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,18 +27,19 @@ class Credits extends Component {
   handlesubmit = (event) => {
     event.preventDefault();
     const newDebit = {
+      id: Date.now(), 
       description: this.state.description,
       amount: parseFloat(this.state.amount),
+      date: new Date().toISOString() 
     };
     this.props.addDebit(newDebit);
     this.setState({ description: '', amount: '' });
   };
-  
-  // Render the debits list
+
   debitsView = () => {
-    return this.props.debits.map((debit, index) => (
-      <li key={index}>
-        {debit.description}: ${debit.amount.toFixed(2)}
+    return this.props.debits.map((debit) => (
+      <li key={debit.id}>
+        ${debit.amount.toFixed(2)} {debit.description} {debit.date ? debit.date.slice(0, 10) : ''}
       </li>
     ));
   };
@@ -90,4 +91,4 @@ class Credits extends Component {
     );
   }
 }
-export default Credits;
+export default Debits;

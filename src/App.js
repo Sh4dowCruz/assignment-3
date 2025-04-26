@@ -55,15 +55,15 @@ class App extends Component {
   }
 
   //Add the credit entry
-  addCredit = (credit) => {  
+  addCredit = (credit) => {
     this.setState((prevState) => {
-      const newCredit = [...prevState.creditList, credit];
-      const totalCredits = newCredit.reduce((sum, item) => sum + item.amount, 0);
-      const totalDebits = prevState.debits.reduce((sum, item) => sum + item.amount, 0);
+      const newCreditList = [...prevState.creditList, credit];
+      const totalCredits = newCreditList.reduce((sum, item) => sum + item.amount, 0);
+      const totalDebits = prevState.debitList.reduce((sum, item) => sum + item.amount, 0);
       const updatedBalance = totalCredits - totalDebits;
       return {
-        credits: newCredit,
-        accountBalance: parseFloat(updatedBalance.toFixed(2)),  // Rounding
+        creditList: newCreditList,
+        accountBalance: parseFloat(updatedBalance.toFixed(2)),
       };
     });
   }
@@ -71,12 +71,12 @@ class App extends Component {
   //Add the debit entry
   addDebit = (debit) => {
     this.setState((prevState) => {
-      const newDebit = [...prevState.debitList, debit];
-      const totalCredits = prevState.credits.reduce((sum, item) => sum + item.amount, 0);
-      const totalDebits = newDebit.reduce((sum, item) => sum + item.amount, 0);
+      const newDebitList = [...prevState.debitList, debit];  // add new debit
+      const totalCredits = prevState.creditList.reduce((sum, item) => sum + item.amount, 0);
+      const totalDebits = newDebitList.reduce((sum, item) => sum + item.amount, 0);
       const updatedBalance = totalCredits - totalDebits;
       return {
-        debits: newDebit,
+        debitList: newDebitList,
         accountBalance: parseFloat(updatedBalance.toFixed(2)),
       };
     });

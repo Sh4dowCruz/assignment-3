@@ -27,8 +27,10 @@ class Credits extends Component {
   handlesubmit = (event) => {
     event.preventDefault();
     const newCredit = {
+      id: Date.now(), 
       description: this.state.description,
       amount: parseFloat(this.state.amount),
+      date: new Date().toISOString()
     };
     this.props.addCredit(newCredit);
     this.setState({ description: '', amount: '' });
@@ -36,13 +38,12 @@ class Credits extends Component {
 
   // Render the credits list
   creditsView = () => {
-    return this.props.credits.map((credit, index) => (
-      <li key={index}>
-        {credit.description}: ${credit.amount.toFixed(2)}
+    return this.props.credits.map((credit) => (
+      <li key={credit.id}>
+        ${credit.amount.toFixed(2)} {credit.description} {credit.date ? credit.date.slice(0, 10) : ''}
       </li>
     ));
   };
-  
 
   render() {
     return (
