@@ -27,8 +27,10 @@ class Credits extends Component {
   handlesubmit = (event) => {
     event.preventDefault();
     const newCredit = {
+      id: Date.now(), 
       description: this.state.description,
       amount: parseFloat(this.state.amount),
+      date: new Date().toISOString()
     };
     this.props.addCredit(newCredit);
     this.setState({ description: '', amount: '' });
@@ -36,13 +38,12 @@ class Credits extends Component {
 
   // Render the credits list
   creditsView = () => {
-    return this.props.credits.map((credit, index) => (
-      <li key={index}>
-        {credit.description}: ${credit.amount.toFixed(2)}
+    return this.props.credits.map((credit) => (
+      <li key={credit.id}>
+        ${credit.amount.toFixed(2)} {credit.description} {credit.date ? credit.date.slice(0, 10) : ''}
       </li>
     ));
   };
-  
 
   render() {
     return (
@@ -68,6 +69,14 @@ class Credits extends Component {
           />
           <button type="submit">Add Credit</button>
         </form>
+        <hr />
+        <div style={{ color: 'red' }}>
+          <h3>For Reference Only:</h3>
+          <p>Account Balance = Total Credit - Total Debit</p>
+          <p>Total Credit = ${this.props.totalCredit}</p>
+          <p>Total Debit = ${this.props.totalDebit}</p>
+          <p>Account Balance = ${this.props.accountBalance}</p>
+        </div>
         <ul>{this.creditsView()}</ul>
         <div style={{ marginTop: '20px' }}>
           <Link to="/">Back to Home</Link>
