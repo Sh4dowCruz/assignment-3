@@ -42,7 +42,11 @@ class App extends Component {
     const creditsTotal = credits.reduce((sum,item) => sum + item.amount, 0); 
     const debitsTotal = debits.reduce((sum,item) => sum + item.amount, 0);
     const updatedBalance = creditsTotal - debitsTotal;
-    this.setState({accountBalance: parseFloat(updatedBalance.toFixed(2)), credits, debits});  // Rounding
+    this.setState({
+      accountBalance: parseFloat(updatedBalance.toFixed(2)), // Rounding
+      creditList: credits,
+      debitList: debits
+    });  
     }
 
     catch (error) {
@@ -53,7 +57,7 @@ class App extends Component {
   //Add the credit entry
   addCredit = (credit) => {  
     this.setState((prevState) => {
-      const newCredit = [...prevState.credits, credit];
+      const newCredit = [...prevState.creditList, credit];
       const totalCredits = newCredit.reduce((sum, item) => sum + item.amount, 0);
       const totalDebits = prevState.debits.reduce((sum, item) => sum + item.amount, 0);
       const updatedBalance = totalCredits - totalDebits;
@@ -67,7 +71,7 @@ class App extends Component {
   //Add the debit entry
   addDebit = (debit) => {
     this.setState((prevState) => {
-      const newDebit = [...prevState.debits, debit];
+      const newDebit = [...prevState.debitList, debit];
       const totalCredits = prevState.credits.reduce((sum, item) => sum + item.amount, 0);
       const totalDebits = newDebit.reduce((sum, item) => sum + item.amount, 0);
       const updatedBalance = totalCredits - totalDebits;
@@ -87,6 +91,8 @@ class App extends Component {
 
   // Create Routes and React elements to be rendered using React components
   render() {  
+    const totalCredits = this.state.creditList.reduce((sum, c) => sum + c.amount, 0).toFixed(2);
+    const totalDebits = this.state.debitList.reduce((sum, d) => sum + d.amount, 0).toFixed(2); 
     // Create React elements and pass input props to components
     const HomeComponent = () => (<Home accountBalance={this.state.accountBalance.toFixed(2)} />)
     const UserProfileComponent = () => (
@@ -94,13 +100,18 @@ class App extends Component {
     )
     const LogInComponent = () => (<LogIn user={this.state.currentUser} mockLogIn={this.mockLogIn} />)
     const CreditsComponent = () => (<Credits 
-      credits={this.state.credits}
+      credits={this.state.creditList}
       accountBalance ={this.state.accountBalance.toFixed(2)}
       addCredit={this.addCredit}
+      totalCredit={totalCredits}
+      totalDebit={totalDebits}
     />)
-    const DebitsComponent = () => (<Debits debits={this.state.debits}
+    const DebitsComponent = () => (<Debits 
+      debits={this.state.debitList}
       accountBalance ={this.state.accountBalance.toFixed(2)}
-      addDebit={this.addDebit}  
+      addDebit={this.addDebit}
+      totalCredit={totalCredits}
+      totalDebit={totalDebits}
     />)
 
     // Important: Include the "basename" in Router, which is needed for deploying the React app to GitHub Pages

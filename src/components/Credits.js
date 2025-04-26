@@ -68,6 +68,14 @@ class Credits extends Component {
           />
           <button type="submit">Add Credit</button>
         </form>
+        <hr />
+        <div style={{ color: 'red' }}>
+          <h3>For Reference Only:</h3>
+          <p>Account Balance = Total Credit - Total Debit</p>
+          <p>Total Credit = ${this.props.totalCredit}</p>
+          <p>Total Debit = ${this.props.totalDebit}</p>
+          <p>Account Balance = ${this.props.accountBalance}</p>
+        </div>
         <ul>{this.creditsView()}</ul>
         <div style={{ marginTop: '20px' }}>
           <Link to="/">Back to Home</Link>
