@@ -5,7 +5,7 @@ This is the top-level component of the app.
 It contains the top-level state.
 ==================================================*/
 import React, {Component} from 'react';
-import {BrowserRouter as Router, Route} from 'react-router-dom';
+import { HashRouter as Router, Route } from 'react-router-dom';
 import axios from 'axios';
 import Home from "./components/Home"
 import UserProfile from "./components/UserProfile"
